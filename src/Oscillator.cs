@@ -26,7 +26,6 @@ namespace DST {
         public AudioUnit pwInput;
 
         public WAVEFORM waveForm;
-        [Range(0.0F, 1.0F)]
         public double gain = 0.2;
         private double phase = 0.0; // phase between 0.0-twopi (for sin)
         private double phase1 = 0.0; // phase betwee 0.0-1.0 (for saw, pulse)
