@@ -20,11 +20,16 @@ using UnityEngine;
 namespace DST {
     public class Constant : AudioUnit
     {
+        public AudioUnit input;
         public double value = 0.0;
 
         public override void ProcessAudio(float[] data, long sampleNum, int channels) {
+            if (input != null) {
+                input.ProcessAudio(data, sampleNum, channels);
+            }
             for (int i=0;i<data.Length;i++ ) {
-                data[i] = (float)value;
+                var offset = input != null ? data[i] : 0.0;
+                data[i] = (float)value + (float)offset;
             }
             return;
         } 
