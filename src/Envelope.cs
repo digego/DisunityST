@@ -162,10 +162,10 @@ namespace DST {
             }
         }
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels) {
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
             // input streams
-            if (audioInput != null) {  audioInput.ProcessAudio(audioData, sampleNum, channels); }
-            if (gateInput != null) { gateInput.ProcessAudio(gateData, sampleNum, channels);}
+            if (audioInput != null) {  audioInput.ProcessAudio(audioData, this, sampleNum, channels); }
+            if (gateInput != null) { gateInput.ProcessAudio(gateData, this, sampleNum, channels);}
             // output stream
             for(int i = 0; i < data.Length; i+=channels) {
                 data[i] = audioData[i] * (float) processSample((float) gateData[i]);

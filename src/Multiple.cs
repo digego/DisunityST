@@ -32,10 +32,10 @@ namespace DST {
             tmpData = new float[buflength * channels];
         }
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels) {
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
             // only process input once for 'n' outputs
             if ((outputCnt % outputs.Length) == 0) {
-                input.ProcessAudio(tmpData, sampleNum, channels);
+                input.ProcessAudio(tmpData, this, sampleNum, channels);
             }
             // use tmpData for all outputs
             for (int i=0;i<data.Length;i++ ) {

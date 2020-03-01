@@ -26,10 +26,10 @@ namespace DST {
         {
             if (input != null)
             {
-                input.ProcessAudio(data, sampleNum, channels);
+                input.ProcessAudio(data, null, sampleNum, channels);
             }
             
-            sampleNum += data.Length;
+            sampleNum += (data.Length / channels);
         }
     }
 }

@@ -23,9 +23,9 @@ namespace DST {
         public AudioUnit input;
         public double value = 0.0;
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels) {
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
             if (input != null) {
-                input.ProcessAudio(data, sampleNum, channels);
+                input.ProcessAudio(data, this, sampleNum, channels);
             }
             for (int i=0;i<data.Length;i++ ) {
                 var offset = input != null ? data[i] : 0.0;

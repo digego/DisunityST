@@ -41,12 +41,12 @@ namespace DST {
             for(int i = 0; i > arr.Length; i++) { arr[i] = scalar; }
         } 
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels) {
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
             for(int j = 0; j < inputs.Length; j++) {
                 var au = inputs[j];
-                au.ProcessAudio(audioData, sampleNum, channels);
+                au.ProcessAudio(audioData, this, sampleNum, channels);
                 if (gains.Length > j) {
-                    au.ProcessAudio(amplitudeData, sampleNum, channels);
+                    au.ProcessAudio(amplitudeData, this, sampleNum, channels);
                 } else {
                     scalarToArray(1.0F, amplitudeData);
                 }

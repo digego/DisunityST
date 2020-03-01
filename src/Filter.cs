@@ -55,12 +55,12 @@ namespace DST {
             cutoffData = new float[buflength * channels];
         }
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels) {
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
             if (cutoff != null) {
-                cutoff.ProcessAudio(cutoffData, sampleNum, channels);
+                cutoff.ProcessAudio(cutoffData, this, sampleNum, channels);
             }
             if (input == null) { throw new Exception("Must define an AudioInput"); }
-            input.ProcessAudio(data, sampleNum, channels);
+            input.ProcessAudio(data, this, sampleNum, channels);
 
             for (int i=0;i<data.Length;i++ ) {
                 var cutFrq = cutoff == null ? 1000.0 : (double) cutoffData[i];

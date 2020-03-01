@@ -29,6 +29,6 @@ namespace DST {
             }
         }
 
-        public abstract void ProcessAudio(float[] buffer, long sampleNum, int numChannels);
+        public abstract void ProcessAudio(float[] buffer, AudioUnit caller, long sampleNum, int numChannels);
     }
 }

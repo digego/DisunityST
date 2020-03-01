@@ -113,10 +113,10 @@ namespace DST {
             pwData = new float[buflength * Channels];
         }
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels ) {
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels ) {
             // input streams?
-            if (frqInput != null) { frqInput.ProcessAudio(frqData, sampleNum, channels); }
-            if (pwInput != null) { pwInput.ProcessAudio(pwData, sampleNum, channels); }
+            if (frqInput != null) { frqInput.ProcessAudio(frqData, this, sampleNum, channels); }
+            if (pwInput != null) { pwInput.ProcessAudio(pwData, this, sampleNum, channels); }
             // output stream
             for(int i = 0; i < data.Length; i += channels) {
                 float frq = (frqInput ? frqData[i] : 220.0F) * (float) frqOffset; // this is frqInput
