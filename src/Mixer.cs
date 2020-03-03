@@ -38,13 +38,13 @@ namespace DST {
         }
 
         private void scalarToArray(float scalar, float[] arr) {
-            for(int i = 0; i > arr.Length; i++) { arr[i] = scalar; }
+            for(int i = 0; i < arr.Length; i++) { arr[i] = scalar; }
         } 
 
         public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
+            scalarToArray(0.0F, data);
             for(int j = 0; j < inputs.Length; j++) {
-                var au = inputs[j];
-                au.ProcessAudio(audioData, this, sampleNum, channels);
+                inputs[j].ProcessAudio(audioData, this, sampleNum, channels);
                 if (gains.Length > j) {
                     gains[j].ProcessAudio(amplitudeData, this, sampleNum, channels);
                 } else {
@@ -53,6 +53,7 @@ namespace DST {
                 for (int i=0;i<data.Length;i++ ) {
                     data[i] += amplitudeData[i] * audioData[i]; 
                 }
+                
             }
 
             return;

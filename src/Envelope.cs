@@ -162,16 +162,21 @@ namespace DST {
             }
         }
 
+        private void scalarToArray(float scalar, float[] arr) {
+            for(int i = 0; i < arr.Length; i++) { arr[i] = scalar; }
+        } 
+
         public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
             // input streams
             if (audioInput != null) {  audioInput.ProcessAudio(audioData, this, sampleNum, channels); }
-            if (gateInput != null) { gateInput.ProcessAudio(gateData, this, sampleNum, channels);}
+            else { scalarToArray(0.0F, audioData ); }
+            if (gateInput != null) { gateInput.ProcessAudio(gateData, this, sampleNum, channels); }
+            else { scalarToArray(0.0F, gateData ); }
             // output stream
             for(int i = 0; i < data.Length; i+=channels) {
-                data[i] = audioData[i] * (float) processSample((float) gateData[i]);
-                for (int j = 1; j < channels; j++) {
-                    data[i+j] = data[i]; // i.e. mono
-                }
+                var g = (float) processSample((float) gateData[i]);
+                for (int j = 0; j < channels; j++) {
+                    data[i + j] = audioData[i + j] * g;                }
             }
             return;
         }
