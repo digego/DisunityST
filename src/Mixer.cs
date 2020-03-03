@@ -46,12 +46,12 @@ namespace DST {
                 var au = inputs[j];
                 au.ProcessAudio(audioData, this, sampleNum, channels);
                 if (gains.Length > j) {
-                    au.ProcessAudio(amplitudeData, this, sampleNum, channels);
+                    gains[j].ProcessAudio(amplitudeData, this, sampleNum, channels);
                 } else {
                     scalarToArray(1.0F, amplitudeData);
                 }
                 for (int i=0;i<data.Length;i++ ) {
-                    data[i] += 1.0F * audioData[i]; 
+                    data[i] += amplitudeData[i] * audioData[i]; 
                 }
             }
 
