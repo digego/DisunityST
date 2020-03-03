@@ -16,6 +16,8 @@ using UnityEngine;
 
 namespace DST {
     public abstract class AudioUnit : MonoBehaviour {
+
+        public string AUID = "<empty>";
         protected static int speakerModeToChannels(AudioSpeakerMode mode) {
             switch(mode) {
                 case AudioSpeakerMode.Mono: return 1;

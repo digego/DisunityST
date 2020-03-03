@@ -12,41 +12,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ***/
 
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace DST {
-    public class GateSequencer : AudioUnit
+    public class VCA : AudioUnit
     {
-        public double[] steps = { 0.5 };
-
-        public double BPM = 120.0;
-
-        public double stepLength = 1.0;
-        private double SampleRate; 
-        private long trigger = 0;
-        private long playHead = 0;
+        public AudioUnit input;
+        public AudioUnit ampInput;
+        [Range(0.0F, 3.0F)]
+        public float amp = 1.0F;
+        private float[] ampData;
 
         void Start() {
-            SampleRate = AudioSettings.outputSampleRate;
+            int buflength, numbufs;
+            AudioSettings.GetDSPBufferSize(out buflength, out numbufs);
+            var channels = AudioUnit.speakerModeToChannels(AudioSettings.speakerMode);
+            ampData = new float[buflength * channels];
         }
 
-        public override void ProcessAudio(float[] data, long sampleNum, int channels ) {
-            var beatInc = (long) ((SampleRate / (BPM / 60.0)) * stepLength);
-            for(int i = 0; i < data.Length; i += channels) {
-                var gateLength = (float)steps[playHead % steps.Length];
-                data[i] = trigger < ((long) ((SampleRate / (BPM / 60.0)) * gateLength)) ? 1.0F : 0.0F;
-                for (int j = 1; j < channels; j++) {
-                    data[i+j] = data[i]; // i.e. mono
-                }
-                trigger++;
-                if (trigger > beatInc) { 
-                    trigger = 0; 
-                    playHead++;
-                }
+        public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
+            if (input != null) {
+                input.ProcessAudio(data, this, sampleNum, channels);
+            }
+            if (ampInput != null) {
+                ampInput.ProcessAudio(ampData, this, sampleNum, channels);
+            }
+            for (int i=0;i<data.Length;i++ ) {
+                var offset = input != null ? data[i] : 0.0;
+                data[i] = data[i] * (ampInput ? ampData[i] + amp : amp);
             }
             return;
-        }
+        } 
     }
 }

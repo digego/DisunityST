@@ -28,7 +28,10 @@ namespace DST {
         }
 
         public AudioUnit input;
-        public AudioUnit cutoff;
+        public AudioUnit cutoffInput;
+        [Range(50.0F, 20000.0F)]
+        public double cutoff = 800.0;
+
         [Range(0.0F, 0.995F)]
         public double resonance = 0.1;
         public FilterType filterType = FilterType.LOW;
@@ -56,15 +59,16 @@ namespace DST {
         }
 
         public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels) {
-            if (cutoff != null) {
-                cutoff.ProcessAudio(cutoffData, this, sampleNum, channels);
+            if (cutoffInput != null) {
+                cutoffInput.ProcessAudio(cutoffData, this, sampleNum, channels);
             }
             if (input == null) { throw new Exception("Must define an AudioInput"); }
             input.ProcessAudio(data, this, sampleNum, channels);
 
             for (int i=0;i<data.Length;i++ ) {
-                var cutFrq = cutoff == null ? 1000.0 : (double) cutoffData[i];
+                var cutFrq = cutoffInput == null ? cutoff : (double) cutoffData[i] + cutoff;
                 if (oldCutFrq != cutFrq || oldRes != resonance) {
+                    cutFrq = cutFrq < 50.0 ? 50.0 : cutFrq;
                     oldCutFrq = cutFrq;
                     oldRes = resonance;
                     g = Math.Tan(3.141592 * (cutFrq / SampleRate));

@@ -20,16 +20,27 @@ namespace DST {
     public class AudioSink : MonoBehaviour {
 
         public AudioUnit input;
-        private long sampleNum = 0;
+        [Range(0.0F, 1.0F)]
+        public float gain = 0.5F;
+        private long _sampleNum = 0;
+    
+        public long sampleNum {
+            get {
+                return _sampleNum;
+            }    
+        }
 
         private void OnAudioFilterRead(float[] data, int channels)
         {
             if (input != null)
             {
-                input.ProcessAudio(data, null, sampleNum, channels);
+                input.ProcessAudio(data, null, _sampleNum, channels);
+                for (int i=0; i < data.Length; i++) {
+                    data[i] *= gain;
+                }
             }
             
-            sampleNum += (data.Length / channels);
+            _sampleNum += (data.Length / channels);
         }
     }
 }

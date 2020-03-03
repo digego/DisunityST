@@ -12,15 +12,18 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ***/
 
+using System;
 using UnityEngine;
 
 namespace DST {
+
     public class Sequencer : AudioUnit
     {
         public AudioUnit frqOutput;
         public AudioUnit gateOutput;
 
-        public double[] frqs = { 220.0, 230.0, 250.0, 270.0 };
+
+        public double[] pitches = { 60, 63, 67, 72 };
         public double[] durations = { 1.0, 1.0, 0.5, 1.5 };
         public double[] gates = { 0.5 };
 
@@ -31,14 +34,18 @@ namespace DST {
         private long stepNumber = -1;
 
         private long stepDuration = -1;
-        private long oldSampleNum = -1;
         private long processRunNum = 0;
+
+        private double midi2Frq(double pitch) {
+            return 440.0 * Math.Pow(2.0, (pitch - 69.0) / 12.0);
+        }
 
         void Start() {
             SampleRate = AudioSettings.outputSampleRate;
         }
 
         public override void ProcessAudio(float[] data, AudioUnit caller, long sampleNum, int channels ) {
+            if (BPM < 40.0) { BPM = 40.0; }
             var tmpCountDown = countDown;
             var tmpStepNumber = stepNumber;
             var tmpStepDuration = stepDuration;
@@ -54,7 +61,7 @@ namespace DST {
                     data[i] = ((tmpStepDuration - tmpCountDown) > (long)(gateLength * tmpStepDuration)) ? 0.0F : 1.0F; 
                     // data[i] = (sampleNum % stepDuration) < ((long) ((SampleRate / (BPM / 60.0)) * gateLength)) ? 1.0F : 0.0F;
                 } else {
-                    data[i] = (float)frqs[tmpStepNumber % frqs.Length];
+                    data[i] = (float) midi2Frq(pitches[tmpStepNumber % pitches.Length]);
                 }
                 for (int j = 1; j < channels; j++) {
                     data[i+j] = data[i]; // i.e. mono
