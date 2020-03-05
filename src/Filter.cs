@@ -29,7 +29,7 @@ namespace DST {
 
         public AudioUnit input;
         public AudioUnit cutoffInput;
-        [Range(50.0F, 20000.0F)]
+        [Range(0.0F, 20000.0F)]
         public double cutoff = 800.0;
 
         [Range(0.0F, 0.995F)]
@@ -68,7 +68,7 @@ namespace DST {
             for (int i=0;i<data.Length;i++ ) {
                 var cutFrq = cutoffInput == null ? cutoff : (double) cutoffData[i] + cutoff;
                 if (oldCutFrq != cutFrq || oldRes != resonance) {
-                    cutFrq = cutFrq < 50.0 ? 50.0 : cutFrq;
+                    cutFrq = cutFrq < 0.0 ? 0.0 : cutFrq;
                     oldCutFrq = cutFrq;
                     oldRes = resonance;
                     g = Math.Tan(3.141592 * (cutFrq / SampleRate));
